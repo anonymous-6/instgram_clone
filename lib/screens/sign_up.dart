@@ -29,13 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Uint8List? _image;
   bool _isLoading = false;
 
-  void navigateToLoginIn() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
-  }
+  
 
   @override
   void dispose() {
@@ -71,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (res != 'sucess') {
       showSnackBar(res, context);
     } else {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ResponsiveLayout(
             mobilescreenlayout: MobilescreenLayout(),
@@ -81,10 +75,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
     }
   }
+  void navigateToLoginIn() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
           child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),

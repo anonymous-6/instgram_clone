@@ -13,25 +13,23 @@ class Authmethod {
 
   //sign up user
   Future<String> signUpUser({
-    String? email,
+    required String email,
     required String password,
-    String? username,
-    String? bio,
-    Uint8List? file,
+    required String username,
+    required String bio,
+    required Uint8List file,
   }) async {
     String res = 'Some error might occur';
     try {
-      if (email!.isNotEmpty ||
+      if (email.isNotEmpty ||
           password.isNotEmpty ||
-          username!.isNotEmpty ||
-          bio!.isNotEmpty) {
+          username.isNotEmpty ||
+          bio.isNotEmpty) {
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
-        print(cred.user!.uid);
-
         String photoUrl = await StorageMethods().uploadImageToStorage(
-            childName: 'childName', file: file!, ispost: false);
+            childName: 'childName', file: file, ispost: false);
         //add user to the database
         await _firestore.collection('users').doc(cred.user!.uid).set({
           'username': username,
@@ -43,7 +41,7 @@ class Authmethod {
           'photoUrl': photoUrl,
         });
 
-        //
+        
         // await _firestore.collection('users').add({
         //   'username': username,
         //   'uid': cred.user!.uid,
@@ -56,13 +54,13 @@ class Authmethod {
         res = 'success';
       }
     }
-    // on FirebaseAuthException catch (err) {
-    //   if (err.code == 'Invalid-email') {
-    //     res = 'The email is badly formatted';
-    //   } else if (err.code == 'weak-password') {
-    //     res = 'Password should be at least 6 characters';
-    //   }
-    // }
+    on FirebaseAuthException catch (err) {
+      if (err.code == 'Invalid-email') {
+        res = 'The email is badly formatted';
+      } else if (err.code == 'weak-password') {
+        res = 'Password should be at least 6 characters';
+      }
+    }
     catch (err) {
       res = err.toString();
     }
@@ -71,12 +69,12 @@ class Authmethod {
 
   //logging in user
   Future<String> logInUser({
-    String? email,
+    required String email,
     required String password,
   }) async {
     String res = 'Some error occured';
     try {
-      if (email!.isNotEmpty || password.isNotEmpty) {
+      if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
         res = 'sucess';
@@ -84,13 +82,13 @@ class Authmethod {
         res = 'please enter all the fields';
       }
     }
-    // on FirebaseAuthException catch (e) {
-    //   if (e.code == 'user-not found') {
-    //     res = 'kindly input the correct parameters';
-    //   } else if (e.code == 'wrong password') {
-    //     res = 'Input the right password';
-    //   }
-    // }
+    on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not found') {
+        res = 'kindly input the correct parameters';
+      } else if (e.code == 'wrong password') {
+        res = 'Input the right password';
+      }
+    }
     catch (err) {
       res = err.toString();
     }
